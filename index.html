@@ -10,15 +10,26 @@
 <body>
     <div class="container">
         <div class="searchContainer">
-            <h1>Search</h1>
+            <h1>Search Images</h1>
             <input type="text" id="searchInput" placeholder="Search for images...">
             <button id="searchButton">Search</button>
         </div>
-      
+        <div id="tagContainer">
+            <button class="tag" data-tag="nature">Nature</button>
+            <button class="tag" data-tag="background">Background</button>
+            <button class="tag" data-tag="wallpaper">Wallpaper</button>
+        </div>
         <div id="imageContainer"></div>
         <button id="loadMoreButton">More Images</button>
+    </div>
 
-
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">x</span>
+            <img id="modalImage" src="" alt="Image">
+            <div id="modalDetails"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
