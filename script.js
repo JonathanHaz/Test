@@ -1,7 +1,6 @@
-const apiKey = "42079125-1909400cd5615db78c9c2cb93";
+const imageContainer = document.getElementById('imageContainer');
 const searchButton = document.getElementById('searchButton');
 const loadMoreButton = document.getElementById('loadMoreButton');
-const imageContainer = document.getElementById('imageContainer');
 const modal = document.getElementById('modal');
 const modalImage = document.getElementById('modalImage');
 const modalDetails = document.getElementById('modalDetails');
@@ -32,13 +31,13 @@ tags.forEach(tag => {
     });
 });
 
+//Normal Fetch
 function fetchImages() {
-    const url = `https://pixabay.com/api/?key=${apiKey}&q=${encodeURIComponent(searchTerm)}&image_type=photo&page=${page}&per_page=10`;
+    const url = `http://localhost:3000/api/images/search?q=${encodeURIComponent(searchTerm)}&page=${page}`;
     fetch(url)
-        .then(response => response.json()) 
+        .then(response => response.json())
         .then(data => {
-            console.log( data ); 
-            if (page === 1) imageContainer.innerHTML = ''; 
+            if (page === 1) imageContainer.innerHTML = '';
             data.hits.forEach(hit => {
                 const imageCard = document.createElement('div');
                 imageCard.classList.add('image-card');
@@ -58,6 +57,38 @@ function fetchImages() {
         .catch(error => console.error('Error fetching images:', error));
 }
 
+//Random
+function fetchRandomImages() {
+    const url = `http://localhost:3000/api/images/random?page=${page}`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Random images data:', data);
+            if (data && data.hits && Array.isArray(data.hits)) {
+                if (page === 1) imageContainer.innerHTML = '';
+                data.hits.forEach(hit => {
+                    const imageCard = document.createElement('div');
+                    imageCard.classList.add('image-card');
+                    imageCard.innerHTML = `
+                        <img src="${hit.largeImageURL}" alt="${hit.tags}">
+                        <div class="image-details">
+                            <p><strong>Tags:</strong> ${hit.tags}</p>
+                            <p><strong>User:</strong> ${hit.user}</p>
+                            <p><strong>Likes:</strong> ${hit.likes}</p>
+                        </div>
+                        <i class="fas fa-heart favorite-icon"></i>
+                    `;
+                    imageCard.addEventListener('click', () => openModal(hit));
+                    imageContainer.appendChild(imageCard);
+                });
+            } else {
+                console.error('Error: Unexpected data structure', data);
+            }
+        })
+        .catch(error => console.error('Error fetching random images:', error));
+}
+
+//Modal
 function openModal(imageData) {
     modal.style.display = "block";
     modalImage.src = imageData.largeImageURL;
@@ -81,4 +112,8 @@ window.addEventListener('click', (event) => {
         modal.style.display = "none";
         document.body.classList.remove('no-scroll'); 
     }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    fetchRandomImages();
 });
